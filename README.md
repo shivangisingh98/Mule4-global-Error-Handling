@@ -7,17 +7,17 @@ Mule4-global-Error-Handling
 Here I am going to make an API using mule4 , which explains how to handle the errors globally in any API in mule4.
 
 ## Getting Started
-```
+
 So I used here a simple GET method which will handle two errors:
+```
 - NOT_FOUND (HTTP-status-code:404)
 - METHOD_NOT_ALLOWED (HTTP-status-code:405)
-And one default which is Internal server error i.e (HTTP status code :500)
-
+- And one default which is Internal server error i.e (HTTP status code :500)
+```
 Basically you will get an idea by using this code how to define the exception globally in an API.
 
 Similarly you can do this for other methods and other exceptions also.
 
-```
 
 ### Prerequisites
 
@@ -43,7 +43,7 @@ https://www.postman.com/downloads/
 
 ## Running the API
 
-just hit the URL in postman which we configured in the API with ## GET method:
+just hit the URL in postman which we configured in the API with GET method:
 ```
 http://localhost:8081/api/Error
 ```
