@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+		<error-handler name="global_error_handler" doc:id="5964f563-b4b5-4f09-a073-00e9edaa5305" >
+		<on-error-propagate enableNotifications="true" logException="true" doc:name="On Error Propagate" doc:id="51b2b0b9-01e2-4199-9ae3-6fcd3d466e71" type="ANY">
+			<choice doc:name="Choice" doc:id="15ae703d-2464-4e59-9b76-0db51afb10fc" >
+				<when expression="#[error.errorType.identifier == 'NOT_FOUND']">
+					<set-variable value="404" doc:name="HTTP Response Status" doc:id="e3502032-cf69-4c0e-8e3c-e3388696b14f" variableName="httpStatus" />
+				</when>
+				<otherwise>
+					<choice doc:name="Choice" doc:id="9c402c19-1ea0-4c96-84f2-3f43bee3aac2" >
+						<when expression="#[error.errorType.identifier == 'METHOD_NOT_ALLOWED']">
+							<set-variable value="405" doc:name="Set Variable" doc:id="134e096b-b4f2-442e-b4f5-56cf7fc940da" variableName="httpStatus"/>
+						</when>
+						<otherwise >
+							<set-variable value="500" doc:name="Set Variable" doc:id="8ec40417-5418-4265-9d94-e1a9b30c4cf6" variableName="httpStatus"/>
+						</otherwise>
+					</choice>
+
+				</otherwise>
+			
+</choice>
+			<logger level="INFO" doc:name="Logger" doc:id="2d1a269f-02ac-474f-afb4-38288880485d" message="#[vars.httpStatus]"/>
+			<flow-ref doc:name="Flow Reference" doc:id="3c1f273f-97e6-4473-85e7-b108fde326b2" name="Generate_Error_Response"/>
+		</on-error-propagate>
+	
+</error-handler>
+	<sub-flow name="Generate_Error_Response" doc:id="b416c576-abe4-4446-be64-31afe7be56ec" >
+		<ee:transform doc:name="Transform Message" doc:id="b66f4898-0ed4-49ea-b18e-b3c95f20ed4d" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	"code" : vars.httpStatus,
+	"type" : error.errorType.identifier,
+	"message" : error.description
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="4f7fd585-9786-44ad-b0f3-40a0cd11c4e6" message='#[payload ++ {"status":"ERROR"}]'/>
+	</sub-flow>
+</mule>

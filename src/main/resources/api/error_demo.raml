@@ -1,0 +1,18 @@
+#%RAML 1.0
+title: Error-Handling
+baseUri: my-api
+version: 1.0
+description: Global error handling demo API
+protocols: [HTTP]
+/Error: 
+  displayName: Error
+  description: Displays a message.
+  get:
+    responses:
+     200:
+        body:
+          application/json:
+            example: |
+              {
+                "message": "hey,you hit the error API"
+              }
